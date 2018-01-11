@@ -78,6 +78,10 @@ const config = {
 	plugins: [
 		new UglifyJSPlugin(),
 		new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
+		new webpack.NormalModuleReplacementPlugin(
+			/layout-wrapper\/logged-in/,
+			'layout-wrapper/logged-out'
+		),
 	],
 	externals: [
 		'jquery',
