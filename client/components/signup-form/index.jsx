@@ -29,7 +29,7 @@ import FormButton from 'components/forms/form-button';
 import notices from 'notices';
 import Notice from 'components/notice';
 import LoggedOutForm from 'components/logged-out-form';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import formState from 'lib/form-state';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
@@ -566,7 +566,11 @@ class SignupForm extends Component {
 		}
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
-			? login( { isNative: true, locale: this.props.locale, redirectTo: this.props.redirectToAfterLoginUrl } )
+			? login( {
+					isNative: true,
+					locale: this.props.locale,
+					redirectTo: this.props.redirectToAfterLoginUrl,
+				} )
 			: addLocaleToWpcomUrl( config( 'login_url' ), this.props.locale );
 
 		return (

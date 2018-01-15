@@ -16,7 +16,7 @@ import config from 'config';
 import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import SignupActions from 'lib/signup/actions';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -97,34 +97,36 @@ class Site extends React.Component {
 	};
 
 	validate = ( fields, onComplete ) => {
-		wpcom.undocumented().sitesNew( {
-			blog_name: fields.site,
-			blog_title: fields.site,
-			validate: true,
-		},
-		function( error, response ) {
-			let messages = {},
-				errorObject = {};
+		wpcom.undocumented().sitesNew(
+			{
+				blog_name: fields.site,
+				blog_title: fields.site,
+				validate: true,
+			},
+			function( error, response ) {
+				let messages = {},
+					errorObject = {};
 
-			debug( error, response );
+				debug( error, response );
 
-			if ( error && error.message ) {
-				if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
-					siteUrlsSearched.push( fields.site );
+				if ( error && error.message ) {
+					if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
+						siteUrlsSearched.push( fields.site );
 
-					analytics.tracks.recordEvent( 'calypso_signup_site_url_validation_failed', {
-						error: error.error,
-						site_url: fields.site,
-					} );
+						analytics.tracks.recordEvent( 'calypso_signup_site_url_validation_failed', {
+							error: error.error,
+							site_url: fields.site,
+						} );
+					}
+
+					timesValidationFailed++;
+
+					errorObject[ error.error ] = error.message;
+					messages = { site: errorObject };
 				}
-
-				timesValidationFailed++;
-
-				errorObject[ error.error ] = error.message;
-				messages = { site: errorObject };
+				onComplete( null, messages );
 			}
-			onComplete( null, messages );
-		} );
+		);
 	};
 
 	setFormState = state => {

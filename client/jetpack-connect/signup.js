@@ -37,7 +37,7 @@ import WpcomLoginForm from 'signup/wpcom-login-form';
 import { authQueryPropTypes } from './utils';
 import { createAccount as createAccountAction } from 'state/jetpack-connect/actions';
 import { getAuthorizationData } from 'state/jetpack-connect/selectors';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );

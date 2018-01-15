@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { uniqueId } from 'lib/impure-lodash';
+import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
