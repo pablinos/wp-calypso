@@ -76,11 +76,20 @@ const config = {
 		fs: 'empty',
 	},
 	plugins: [
+		new webpack.DefinePlugin( {
+			'process.env.NODE_ENV': JSON.stringify( 'production' ),
+			PROJECT_NAME: JSON.stringify( 'wordpress-com' ),
+			COMMIT_SHA: JSON.stringify( '123fffeee' ),
+		} ),
 		new UglifyJSPlugin(),
 		new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
 		new webpack.NormalModuleReplacementPlugin(
 			/layout-wrapper\/logged-in/,
-			'layout-wrapper/logged-out'
+			'lodash/noop'
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^lib[\/\\]desktop$/,
+			'lodash/noop'
 		),
 	],
 	externals: [
