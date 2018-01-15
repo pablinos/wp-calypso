@@ -206,7 +206,7 @@ export function resendInvites( siteId, inviteId ) {
 			if ( isErrored ) {
 				dispatch(
 					errorNotice(
-						i18n.translate( 'The invitation failed to resend', {
+						i18n.translate( 'The invitation failed to resend.', {
 							context: 'Displayed in a notice when an invitation failed to resend.',
 						} )
 					)
@@ -215,7 +215,7 @@ export function resendInvites( siteId, inviteId ) {
 			} else {
 				dispatch(
 					successNotice(
-						i18n.translate( 'Invitation resent successfully', {
+						i18n.translate( 'Invitation resent.', {
 							context: 'Displayed in a notice when an invitation is resent successfully.',
 						} )
 					)
