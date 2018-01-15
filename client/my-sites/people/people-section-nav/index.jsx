@@ -112,7 +112,7 @@ class PeopleSectionNav extends Component {
 				id: 'viewers',
 			},
 			{
-				title: translate( 'Invites' ),
+				title: translate( 'Invites', { context: 'Filter label for people list' } ),
 				path: '/people/invites/' + siteFilter,
 				id: 'invites',
 			},
