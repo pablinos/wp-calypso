@@ -37,6 +37,7 @@ class TransferDomainStep extends React.Component {
 		goBack: PropTypes.func,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		initialQuery: PropTypes.string,
+		isSignupStep: PropTypes.bool,
 		analyticsSection: PropTypes.string.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		onRegisterDomain: PropTypes.func.isRequired,
@@ -220,11 +221,15 @@ class TransferDomainStep extends React.Component {
 			content = this.addTransfer();
 		}
 
+		const header = ! this.props.isSignupStep && (
+			<HeaderCake onClick={ this.goBack }>
+				{ this.props.translate( 'Use My Own Domain' ) }
+			</HeaderCake>
+		);
+
 		return (
 			<div className="transfer-domain-step">
-				<HeaderCake onClick={ this.goBack }>
-					{ this.props.translate( 'Use My Own Domain' ) }
-				</HeaderCake>
+				{ header }
 				<div>{ content }</div>
 			</div>
 		);
@@ -294,11 +299,15 @@ class TransferDomainStep extends React.Component {
 						break;
 					case domainAvailability.TRANSFERRABLE:
 					case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
-						this.setState( {
-							domain,
-							supportsPrivacy: get( result, 'supports_privacy', false ),
-						} );
-						break;
+						if ( this.props.isSignupStep ) {
+							this.props.onTransferDomain( domain );
+						} else {
+							this.setState( {
+								domain,
+								supportsPrivacy: get( result, 'supports_privacy', false ),
+							} );
+							break;
+						}
 					case domainAvailability.MAPPABLE:
 					case domainAvailability.TLD_NOT_SUPPORTED:
 						const tld = getTld( domain );
