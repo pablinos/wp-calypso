@@ -271,9 +271,18 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 
 export function authorize( queryObject ) {
 	return dispatch => {
-		const { _wp_nonce, client_id, redirect_uri, scope, secret, state, jp_version } = queryObject;
+		const {
+			_wp_nonce,
+			client_id,
+			from,
+			jp_version,
+			redirect_uri,
+			scope,
+			secret,
+			state,
+		} = queryObject;
 		debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
-		dispatch( recordTracksEvent( 'calypso_jpc_authorize' ) );
+		dispatch( recordTracksEvent( 'calypso_jpc_authorize' ), { from } );
 		dispatch( {
 			type: JETPACK_CONNECT_AUTHORIZE,
 			queryObject: queryObject,
@@ -330,7 +339,7 @@ export function authorize( queryObject ) {
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_authorize_success', {
 						site: client_id,
-						from: queryObject && queryObject.from,
+						from,
 					} )
 				);
 			} )
@@ -344,6 +353,7 @@ export function authorize( queryObject ) {
 						status: error.status,
 						error: JSON.stringify( error ),
 						site: client_id,
+						from,
 					} )
 				);
 				dispatch( {
