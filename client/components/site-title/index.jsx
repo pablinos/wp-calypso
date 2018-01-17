@@ -12,6 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 
@@ -31,6 +32,10 @@ class SiteTitleControl extends React.Component {
 		disabled: false,
 	};
 
+	state = {
+		filled: false,
+	};
+
 	onChangeSiteTitle = event => {
 		const blogdescription = this.props.blogdescription;
 		const blogname = event.target.value;
@@ -41,6 +46,12 @@ class SiteTitleControl extends React.Component {
 		const blogname = this.props.blogname;
 		const blogdescription = event.target.value;
 		this.props.onChange( { blogname, blogdescription } );
+
+		if ( blogname ) {
+			this.setState( {
+				filled: true,
+			} );
+		}
 	};
 
 	render() {
@@ -56,7 +67,9 @@ class SiteTitleControl extends React.Component {
 						onChange={ this.onChangeSiteTitle }
 						required
 						value={ blogname }
+						isError={ ! this.state.filled }
 					/>
+					<FormInputValidation isError={ ! this.state.filled } text="Required field." />
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ translate( 'Tagline' ) }</FormLabel>
@@ -66,6 +79,7 @@ class SiteTitleControl extends React.Component {
 						onChange={ this.onChangeDescription }
 						value={ blogdescription }
 					/>
+					<FormInputValidation text="Required field." />
 				</FormFieldset>
 			</div>
 		);
