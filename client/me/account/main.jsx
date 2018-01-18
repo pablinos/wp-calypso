@@ -9,7 +9,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import i18n, { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
-import { debounce, flowRight as compose, get, has, map, size, update } from 'lodash';
+import { debounce, flowRight as compose, get, has, isFunction, map, size, update } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -34,6 +34,7 @@ import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormRadio from 'components/forms/form-radio';
+import FormToggle from 'components/forms/form-toggle';
 import { recordTracksEvent } from 'state/analytics/actions';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -51,6 +52,7 @@ import _user from 'lib/user';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
+const isSendingTracksEventsKey = 'is_sending_tracks_events';
 
 /**
  * Debug instance
@@ -118,6 +120,10 @@ const Account = createReactClass( {
 
 		this.props.recordTracksEvent( 'calypso_color_schemes_select', { colorScheme } );
 		this.updateUserSetting( colorSchemeKey, colorScheme );
+	},
+
+	updateIsSendingTracksEvents( isSendingTracksEvents ) {
+		this.updateUserSetting( isSendingTracksEventsKey, isSendingTracksEvents );
 	},
 
 	getEmailAddress() {
@@ -242,6 +248,18 @@ const Account = createReactClass( {
 			this.props.recordTracksEvent( 'calypso_color_schemes_save', {
 				colorScheme: get( unsavedSettings, colorSchemeKey ),
 			} );
+		}
+
+		if ( has( unsavedSettings, isSendingTracksEventsKey ) ) {
+			this.toggleTracksOptOutCookie( get( unsavedSettings, isSendingTracksEventsKey ) );
+		}
+	},
+
+	toggleTracksOptOutCookie( isSendingTracksEvents ) {
+		const optOutIframe = document.getElementById( 'tracks-opt-out-iframe' );
+		const optOutIframeWindow = get( optOutIframe, [ 'contentWindow' ], {} );
+		if ( isFunction( optOutIframeWindow.postMessage ) ) {
+			optOutIframeWindow.postMessage( isSendingTracksEvents, '*' );
 		}
 	},
 
@@ -486,6 +504,11 @@ const Account = createReactClass( {
 			this.getDisabledState() ||
 			this.hasEmailValidationError();
 
+		// Make sure we are not sending a `null` to the `FormToggle` if the key has not been seen yet.
+		const isSendingTracksEvents = this.getUserSetting( 'is_sending_tracks_events' );
+		const isSendingTracksEventsChecked =
+			isSendingTracksEvents !== null ? isSendingTracksEvents : true;
+
 		return (
 			<div className="account__settings-form" key="settingsForm">
 				<FormFieldset>
@@ -554,6 +577,26 @@ const Account = createReactClass( {
 							<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
 						</FormFieldset>
 					) }
+
+				<FormFieldset>
+					<FormLabel htmlFor="">{ translate( 'Usage Statistics' ) }</FormLabel>
+					<FormToggle
+						disabled={ this.getDisabledState() }
+						id={ isSendingTracksEventsKey }
+						onChange={ this.updateIsSendingTracksEvents }
+						checked={ isSendingTracksEventsChecked }
+					>
+						{ translate( 'Send usage statistics to help us improve our products.' ) }
+					</FormToggle>
+				</FormFieldset>
+				<iframe
+					id="tracks-opt-out-iframe"
+					className="account__tracks-opt-out-iframe"
+					frameBorder="0"
+					allowtransparency="true"
+					scrolling="no"
+					src="https://widgets.wp.com/tracks-opt-out"
+				/>
 
 				{ this.renderHolidaySnow() }
 
