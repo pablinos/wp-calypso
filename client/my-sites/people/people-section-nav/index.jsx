@@ -66,7 +66,7 @@ class PeopleSectionNav extends Component {
 		if ( ! this.props.site ) {
 			return false;
 		}
-		
+
 		// Disable search for wpcom followers, viewers, and invites
 		if ( filter ) {
 			if ( 'followers' === filter || 'viewers' === filter || 'invites' === filter ) {
@@ -112,7 +112,7 @@ class PeopleSectionNav extends Component {
 				id: 'viewers',
 			},
 			{
-				title: translate( 'Invites', { context: 'Filter label for people list' } ),
+				title: translate( 'Invites' ),
 				path: '/people/invites/' + siteFilter,
 				id: 'invites',
 			},
