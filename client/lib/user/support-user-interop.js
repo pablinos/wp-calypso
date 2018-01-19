@@ -15,12 +15,7 @@ import wpcom from 'lib/wp';
 import config from 'config';
 import store from 'store';
 import localforage from 'lib/localforage';
-import {
-	supportUserTokenFetch,
-	supportUserActivate,
-	supportUserError,
-	supportUserPrefill,
-} from 'state/support/actions';
+import { supportUserActivate } from 'state/support/actions';
 import localStorageBypass from 'lib/support/support-user/localstorage-bypass';
 
 /**
@@ -47,8 +42,8 @@ const reduxStoreReady = new Promise( resolve => {
 } );
 export const setReduxStore = _setReduxStore;
 
-// Get the value of the `?support_user=` query param for prefilling
-const getPrefillUsername = () => {
+// Get the value of the `?support_user=` query param
+const getQueryParameter = param => {
 	const queryString = get( window, 'location.search', null );
 
 	if ( ! queryString ) {
@@ -57,17 +52,8 @@ const getPrefillUsername = () => {
 
 	// Remove the initial ? character
 	const query = qs.parse( queryString.slice( 1 ) );
-	return query.support_user || null;
+	return query[ param ] || null;
 };
-
-// Check if we should prefill the support user login box
-reduxStoreReady.then( reduxStore => {
-	const prefillUsername = getPrefillUsername();
-
-	if ( prefillUsername ) {
-		reduxStore.dispatch( supportUserPrefill( prefillUsername ) );
-	}
-} );
 
 // Evaluate isSupportUserSession at module startup time, then freeze it
 // for the remainder of the session. This is needed because the User
@@ -154,27 +140,12 @@ export const boot = () => {
 	} );
 };
 
-export const fetchToken = ( user, password ) => {
-	if ( ! isEnabled() ) {
+reduxStoreReady.then( () => {
+	const username = getQueryParameter( 'support_user' );
+	const token = getQueryParameter( '_support_token' );
+
+	if ( username && token ) {
+		rebootWithToken( username, token );
 		return;
 	}
-
-	debug( 'Fetching support user token' );
-
-	return reduxStoreReady.then( reduxStore => {
-		reduxStore.dispatch( supportUserTokenFetch( user ) );
-
-		const setToken = response => {
-			rebootWithToken( response.username, response.token );
-		};
-
-		const errorFetchingToken = error => {
-			reduxStore.dispatch( supportUserError( error.message ) );
-		};
-
-		return wpcom
-			.fetchSupportUserToken( user, password )
-			.then( setToken )
-			.catch( errorFetchingToken );
-	} );
-};
+} );

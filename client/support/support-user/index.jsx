@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserLoginDialog from './login-dialog';
-import { fetchToken, rebootNormally } from 'lib/user/support-user-interop';
+import { rebootNormally } from 'lib/user/support-user-interop';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { supportUserToggleDialog, supportUserSetUsername } from 'state/support/actions';
 
@@ -42,7 +42,7 @@ class SupportUser extends Component {
 	};
 
 	render() {
-		return <SupportUserLoginDialog { ...this.props } onChangeUser={ fetchToken } />;
+		return <SupportUserLoginDialog { ...this.props } />;
 	}
 }
 
