@@ -127,7 +127,7 @@ KeyBindings.prototype.get = function() {
 				},
 			},
 			{
-				eventName: 'open-support-user',
+				eventName: 'exit-support-user',
 				keys: [ 's', 'u' ],
 				type: 'sequence',
 				description: {
