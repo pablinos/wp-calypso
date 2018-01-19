@@ -29,6 +29,8 @@ import localStorageBypass from 'lib/support/support-user/localstorage-bypass';
 
 const debug = debugModule( 'calypso:support-user' );
 const STORAGE_KEY = 'boot_support_user';
+const USER_PARAM = 'support_user';
+const TOKEN_PARAM = '_support_token';
 
 export const isEnabled = () => config.isEnabled( 'support-user' );
 
@@ -64,8 +66,10 @@ const _isSupportUserSession = ( () => {
 		return false;
 	}
 
-	const supportUser = store.get( STORAGE_KEY );
-	if ( supportUser && supportUser.user && supportUser.token ) {
+	const user = getQueryParameter( USER_PARAM );
+	const token = getQueryParameter( TOKEN_PARAM );
+
+	if ( user && token ) {
 		return true;
 	}
 
@@ -88,22 +92,6 @@ export const rebootNormally = () => {
 	window.location.search = '';
 };
 
-/**
- * Reboot Calypso as the support user
- * @param  {string} user  The support user's username
- * @param  {string} token The support token
- */
-export const rebootWithToken = ( user, token ) => {
-	if ( ! isEnabled() ) {
-		return;
-	}
-
-	debug( 'Rebooting Calypso with support user' );
-
-	store.set( STORAGE_KEY, { user, token } );
-	window.location.search = '';
-};
-
 // Called when an API call fails due to a token error
 const onTokenError = error => {
 	debug( 'Deactivating support user and rebooting due to token error', error.message );
@@ -120,7 +108,9 @@ export const boot = () => {
 
 	localforage.bypass();
 
-	const { user, token } = store.get( STORAGE_KEY );
+	const user = getQueryParameter( USER_PARAM );
+	const token = getQueryParameter( TOKEN_PARAM );
+
 	debug( 'Booting Calypso with support user', user );
 	store.remove( STORAGE_KEY );
 
@@ -139,13 +129,3 @@ export const boot = () => {
 		reduxStore.dispatch( supportUserActivate() );
 	} );
 };
-
-reduxStoreReady.then( () => {
-	const username = getQueryParameter( 'support_user' );
-	const token = getQueryParameter( '_support_token' );
-
-	if ( username && token ) {
-		rebootWithToken( username, token );
-		return;
-	}
-} );
