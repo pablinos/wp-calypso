@@ -35,6 +35,11 @@ const shouldMinify = process.env.hasOwnProperty( 'MINIFY_JS' )
 	: ! isDevelopment;
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
+const babelConfig = JSON.parse( fs.readFileSync( './.babelrc', { encoding: 'utf8' } ) );
+
+babelConfig.presets[ 0 ][ 1 ].modules = false;
+babelConfig.plugins = _.without( babelConfig.plugins, 'add-module-exports' );
+
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
  * {
@@ -62,10 +67,12 @@ function getAliasesForExtensions() {
 
 const babelLoader = {
 	loader: 'babel-loader',
-	options: {
+	options: Object.assign( {}, babelConfig, {
+		babelrc: false,
 		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 		cacheIdentifier: cacheIdentifier,
 		plugins: [
+			...babelConfig.plugins,
 			[
 				path.join(
 					__dirname,
@@ -77,7 +84,7 @@ const babelLoader = {
 				{ async: config.isEnabled( 'code-splitting' ) },
 			],
 		],
-	},
+	} ),
 };
 
 const webpackConfig = {

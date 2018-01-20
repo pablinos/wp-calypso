@@ -28,14 +28,14 @@
 				}
 			}
 		],
-		"./inline-imports.js"
+		"inline-imports.js"
 	],
 	"env": {
 		"test": {
 			"plugins": [
 				[ "transform-builtin-extend", {
 					"globals": [ "Error" ]
-				} ],
+				} ]
 			]
 		}
 	}
