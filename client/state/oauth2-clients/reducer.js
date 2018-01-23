@@ -50,6 +50,11 @@ export const initialClientsData = {
 		title: 'WooCommerce.com',
 		icon: 'https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
 	},
+	56372: {
+		id: 56372,
+		name: 'jetpack',
+		title: 'Jetpack.com',
+	},
 };
 
 export default createReducer( initialClientsData, {

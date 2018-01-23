@@ -26,12 +26,13 @@ import {
 	getSocialAccountLinkService,
 } from 'state/login/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { isWooOAuth2Client, isJetpackOAuth2Client } from 'lib/oauth2-clients';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
 import { login } from 'lib/paths';
 import Notice from 'components/notice';
+import JetpackLogo from 'components/jetpack-logo';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';
 import SocialConnectPrompt from './social-connect-prompt';
@@ -181,6 +182,10 @@ class Login extends Component {
 						) }
 					</p>
 				);
+			}
+
+			if ( isJetpackOAuth2Client( oauth2Client ) ) {
+				preHeader = <JetpackLogo full size={ 72 } />;
 			}
 		}
 

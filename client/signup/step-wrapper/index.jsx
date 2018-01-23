@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -14,6 +15,9 @@ import classNames from 'classnames';
  */
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
+import { isJetpackOAuth2Client } from 'lib/oauth2-clients';
+import JetpackLogo from 'components/jetpack-logo';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 class StepWrapper extends Component {
 	static propTypes = {
@@ -22,6 +26,11 @@ class StepWrapper extends Component {
 		hideFormattedHeader: PropTypes.bool,
 		hideBack: PropTypes.bool,
 		hideSkip: PropTypes.bool,
+		oauth2Client: PropTypes.object,
+	};
+
+	static defaultProps = {
+		oauth2Client: null,
 	};
 
 	renderBack() {
@@ -86,13 +95,22 @@ class StepWrapper extends Component {
 	}
 
 	render() {
-		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
+		const {
+			stepContent,
+			headerButton,
+			hideFormattedHeader,
+			hideBack,
+			hideSkip,
+			oauth2Client,
+		} = this.props;
 		const classes = classNames( 'step-wrapper', {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
 
 		return (
 			<div className={ classes }>
+				{ oauth2Client &&
+					isJetpackOAuth2Client( oauth2Client ) && <JetpackLogo full size={ 72 } /> }
 				{ ! hideFormattedHeader && (
 					<FormattedHeader headerText={ this.headerText() } subHeaderText={ this.subHeaderText() }>
 						{ headerButton }
@@ -112,4 +130,9 @@ class StepWrapper extends Component {
 	}
 }
 
-export default localize( StepWrapper );
+export default connect(
+	state => ( {
+		oauth2Client: getCurrentOAuth2Client( state ),
+	} ),
+	null
+)( localize( StepWrapper ) );

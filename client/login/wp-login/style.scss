@@ -90,3 +90,23 @@ $image-height: 47px;
 .wp-login__private-site-button {
 	width: 100%;
 }
+
+.jetpack {
+	.wp-login__container,
+	.signup__step {
+		.jetpack-logo__icon {
+			fill: #00be28;
+		}
+		button.is-primary {
+			background-color: #00be28;
+			border-color: #00a523;
+		}
+	}
+
+	.signup__step {
+		.jetpack-logo {
+			display: block;
+			margin: 0 auto;
+		}
+	}
+}
