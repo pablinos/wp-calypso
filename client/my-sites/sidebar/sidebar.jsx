@@ -118,7 +118,7 @@ export class MySitesSidebar extends Component {
 			<SidebarItem
 				tipTarget="menus"
 				label={ translate( 'Stats' ) }
-				className="stats"
+				className="sidebar__stats"
 				selected={ itemLinkMatches( [ '/stats', '/store/stats' ], path ) }
 				link={ statsLink }
 				onNavigate={ this.onNavigate }
@@ -315,7 +315,9 @@ export class MySitesSidebar extends Component {
 			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a onClick={ this.trackUpgradeClick } href={ planLink }>
 					<JetpackLogo size={ 24 } />
-					<span className="menu-link-text">{ translate( 'Plan', { context: 'noun' } ) }</span>
+					<span className="sidebar__menu-link-text">
+						{ translate( 'Plan', { context: 'noun' } ) }
+					</span>
 					<span className="sidebar__menu-link-secondary-text">{ planName }</span>
 				</a>
 			</li>
@@ -483,7 +485,7 @@ export class MySitesSidebar extends Component {
 					rel="noopener noreferrer"
 				>
 					<Gridicon icon="my-sites" size={ 24 } />
-					<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
+					<span className="sidebar__menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
 					<Gridicon icon="external" size={ 24 } />
 				</a>
 			</li>
